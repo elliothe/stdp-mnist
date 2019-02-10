@@ -3,8 +3,9 @@ Created on 15.12.2014
 
 @author: Peter U. Diehl
 '''
+import matplotlib
+matplotlib.use("Tkagg")
 
- 
 import numpy as np
 import matplotlib.cm as cmap
 import time
@@ -246,31 +247,35 @@ else:
 
 
 ending = ''
-n_input = 784
-n_e = 400
-n_i = n_e 
-single_example_time =   0.35 * b.second #
+n_input = 784  # number of input neuron 28x28
+n_e = 400   # number of excitatory neuron
+n_i = n_e   # number of inhibitory neuron
+single_example_time =   0.35 * b.second  # b.second is the unit
 resting_time = 0.15 * b.second
-runtime = num_examples * (single_example_time + resting_time)
+runtime = num_examples * (single_example_time + resting_time)   # all spike (pulse)
+
 if num_examples <= 10000:    
     update_interval = num_examples
     weight_update_interval = 20
 else:
     update_interval = 10000
     weight_update_interval = 100
+
 if num_examples <= 60000:    
     save_connections_interval = 10000
 else:
     save_connections_interval = 10000
     update_interval = 10000
 
-v_rest_e = -65. * b.mV 
-v_rest_i = -60. * b.mV 
-v_reset_e = -65. * b.mV
+##### Configurations of synapse and neuron #########
+
+v_rest_e = -65. * b.mV #resting potential of excitatory neuron membrane
+v_rest_i = -60. * b.mV #resting potential of inhibitatory neuron membrane
+v_reset_e = -65. * b.mV #membrane is rest to this potential and entering the refactory period 
 v_reset_i = -45. * b.mV
-v_thresh_e = -52. * b.mV
+v_thresh_e = -52. * b.mV # thresholds for firing a spike
 v_thresh_i = -40. * b.mV
-refrac_e = 5. * b.ms
+refrac_e = 5. * b.ms # refactory period length
 refrac_i = 2. * b.ms
 
 conn_structure = 'dense'
@@ -288,30 +293,30 @@ delay['ei_input'] = (0*b.ms,5*b.ms)
 input_intensity = 2.
 start_input_intensity = input_intensity
 
-tc_pre_ee = 20*b.ms
+tc_pre_ee = 20*b.ms     # Time constant
 tc_post_1_ee = 20*b.ms
 tc_post_2_ee = 40*b.ms
-nu_ee_pre =  0.0001      # learning rate
+nu_ee_pre =  0.0001     # learning rate, different for pre and post-synaptic spike
 nu_ee_post = 0.01       # learning rate
 wmax_ee = 1.0
 exp_ee_pre = 0.2
 exp_ee_post = exp_ee_pre
 STDP_offset = 0.4
 
-if test_mode:
+if test_mode:           # 
     scr_e = 'v = v_reset_e; timer = 0*ms'
-else:
+else:           # the following block seems setting the homoeostatsis for neuron firing, it modifies the thresholds dynamically.
     tc_theta = 1e7 * b.ms
     theta_plus_e = 0.05 * b.mV
     scr_e = 'v = v_reset_e; theta += theta_plus_e; timer = 0*ms'
 offset = 20.0*b.mV
 v_thresh_e = '(v>(theta - offset + ' + str(v_thresh_e) + ')) * (timer>refrac_e)'
 
-
+# Dynamics of excitatory neuron
 neuron_eqs_e = '''
         dv/dt = ((v_rest_e - v) + (I_synE+I_synI) / nS) / (100*ms)  : volt
         I_synE = ge * nS *         -v                           : amp
-        I_synI = gi * nS * (-100.*mV-v)                          : amp
+        I_synI = gi * nS * (-100.*mV - v)                          : amp
         dge/dt = -ge/(1.0*ms)                                   : 1
         dgi/dt = -gi/(2.0*ms)                                  : 1
         '''
@@ -321,6 +326,7 @@ else:
     neuron_eqs_e += '\n  dtheta/dt = -theta / (tc_theta)  : volt'
 neuron_eqs_e += '\n  dtimer/dt = 100.0  : ms'
 
+# Dynamics of inhibitory neuron
 neuron_eqs_i = '''
         dv/dt = ((v_rest_i - v) + (I_synE+I_synI) / nS) / (10*ms)  : volt
         I_synE = ge * nS *         -v                           : amp
@@ -328,6 +334,8 @@ neuron_eqs_i = '''
         dge/dt = -ge/(1.0*ms)                                   : 1
         dgi/dt = -gi/(2.0*ms)                                  : 1
         '''
+
+# Definition of STDP mechanism
 eqs_stdp_ee = '''
                 post2before                            : 1.0
                 dpre/dt   =   -pre/(tc_pre_ee)         : 1.0
