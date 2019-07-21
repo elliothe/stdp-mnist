@@ -15,6 +15,16 @@ In order to get the code run properly, installation should follow the following 
   ```
 
 ## Usage
+### Testing
+Make sure the test/evaluation flag `test_mode = True`{.python}
+```bash
+
+```
+### Training
+
+
+
+## Usage from original author
 To run the simulations you also need to download the MNIST dataset from http://yann.lecun.com/exdb/mnist/ and install the brian simulator (the easiest way is to run the following command from a shell "easy_install brian", otherwise see http://briansimulator.org/docs/installation.html). 
 
 Testing with pretrained weights:
