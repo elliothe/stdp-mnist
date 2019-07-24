@@ -1,4 +1,7 @@
-This is the code for the paper "Unsupervised learning of digit recognition using spike-timing-dependent plasticity" available at http://journal.frontiersin.org/article/10.3389/fncom.2015.00099/abstract#
+This is the code for the paper "Unsupervised learning of digit recognition using spike-timing-dependent plasticity" .
+
+Paper link: http://journal.frontiersin.org/article/10.3389/fncom.2015.00099/abstract#
+Original Code link: https://github.com/peter-u-diehl/stdp-mnist
 
 ## Installation
 
@@ -15,12 +18,42 @@ In order to get the code run properly, installation should follow the following 
   ```
 
 ## Usage
-### Testing
-Make sure the test/evaluation flag `test_mode = True`{.python}
+make sure to use the specific conda environment.
 ```bash
+conda activate brian1
+```
+### Testing
+Make sure the test/evaluation flag is `test_mode = True`, then run the command line.
+```bash
+python Diehl&Cook_spiking_MNIST.py
+```
 
+```bash
+python Diehl&Cook_MNIST_evaluation.py
 ```
 ### Training
+
+I change the clock rate under `b.set_global_preferences` to 0.1ms
+### Neuron Configurations:
+```python
+refrac_e = 5 * b.ms   # Here is unchanged
+refrac_i = 2. * b.ms
+```
+here the refactory period is unchanged since the fabricated neuron range is 2us to 21ms. Since the RC constant is .22ms to 10ms, change neuron_equation_e/i, change two time constants to .22ms and 10ms
+
+As discussed in the original paper, authors claimed that "Increasing the time constant of excitatory neuron membrane Potential to 100ms (from 10~20ms that typically observed in biological neuron), can significantly increase the classification accuracy.
+
+### Synpase configurations:
+```python
+```
+
+
+
+## Potential questions about the code
+
+First of all, I have a very bad memory.
+
+* `/weights/theta_A.npy` is the default file to load the weights. Don't modify the variable named `ending=''` in `Diehl&Cook_spiking_MNIST.py` except you want to load the other checkpoint.
 
 
 

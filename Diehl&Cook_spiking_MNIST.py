@@ -344,7 +344,15 @@ eqs_stdp_ee = '''
             '''
 eqs_stdp_pre_ee = 'pre = 1.; w -= nu_ee_pre * post1'
 eqs_stdp_post_ee = 'post2before = post2; w += nu_ee_post * pre * post2before; post1 = 1.; post2 = 1.'
-    
+
+# eqs_stdp_ee = '''
+#                 dpre/dt   =   -pre/(tc_pre_ee)         : 1.0
+#                 dpost/dt  =   -post/(tc_post_1_ee)     : 1.0
+#             '''
+# eqs_stdp_pre_ee = 'pre = 1.; pre += dpre; w -= nu_ee_pre * post'
+# eqs_stdp_post_ee = 'post += dpost; w += nu_ee_post * pre; post = 1.'
+
+
 b.ion()
 fig_num = 1
 neuron_groups = {}
